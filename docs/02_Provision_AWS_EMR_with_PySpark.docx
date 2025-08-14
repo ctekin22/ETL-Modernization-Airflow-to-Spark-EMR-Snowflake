@@ -1,1 +1,26 @@
+PROVISION AWS EMR WITH PYSPARK
+
+Project Summary
+In this project, we built a scalable data engineering pipeline to extract, transform, and load (ETL) Redfin real estate data using Amazon EMR and PySpark within a Jupyter notebook environment. The goal was to demonstrate how to provision and use AWS managed big data services to process large datasets and prepare them for downstream analytics or machine learning.
+Technology	Purpose
+Amazon EMR	Provisioned big data cluster to run distributed PySpark jobs
+PySpark	Data processing, transformations, null handling
+Jupyter Notebook (EMR Studio)	Interactive development environment for coding and visualization
+AWS S3	Data storage for raw and transformed datasets (CSV and Parquet)
+AWS CLI (wget)	Downloading source data directly into EMR cluster
+Parquet Format	Efficient, columnar storage format for big data
+	
+
+Objective:
+
+Provision a scalable big data processing environment, download raw Redfin real estate CSV data, and load it into a Spark DataFrame for analysis.
+
+Technical Details:
+
+•	Amazon EMR (Elastic MapReduce):
+A managed cluster platform comes with preinstalled big data framework and simplifies running big data frameworks like Apache Spark, Hadoop, Apache Flink and Hive on AWS. EMR allows on-demand cluster provisioning with optimized compute and storage resources, providing scalable and distributed data processing.
+•	EMR Studio & Jupyter Notebook:
+Interactive environment provided by AWS EMR to write and run PySpark code in notebooks, making it easier to develop and debug large-scale data pipelines.
+•	Spark:
+An in-memory distributed computing engine optimized for fast data processing on large datasets.
 
