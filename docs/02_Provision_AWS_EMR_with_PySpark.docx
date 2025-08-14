@@ -24,3 +24,19 @@ Interactive environment provided by AWS EMR to write and run PySpark code in not
 •	Spark:
 An in-memory distributed computing engine optimized for fast data processing on large datasets.
 
+Steps:
+
+1.	Create IAM User
+Next, create a new IAM user for this specific project. Ensure the user has AWS Management Console access and programmatic access by generating Access Key ID and Secret Access Key. These credentials will allow the user to interact with AWS services via AWS SDKs or CLI. Log in to the AWS Console using this new IAM user.
+
+2.	Create Two S3 Buckets
+•	One for raw Redfin data
+•	One for transformed output data
+
+3.	Create a VPC and Subnets
+•	VPC and other networking resources
+•	2 AZ with 2 public subnets
+•	VPC endpoints: S3 Gateway 
+•	Configure routing, gateway, and security group
+
+
