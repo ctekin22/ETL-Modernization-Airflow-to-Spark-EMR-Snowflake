@@ -39,4 +39,20 @@ Next, create a new IAM user for this specific project. Ensure the user has AWS M
 •	VPC endpoints: S3 Gateway 
 •	Configure routing, gateway, and security group
 
+4.	Provisioned an Amazon EMR Cluster
+
+•	Selected EMR release with Apache Spark
+•	Included Jupyter Enterprise Gateway
+•	Primary and Core Node: m5.xlarge
+•	Cluster scaling and provisioning: Use EMR-managed scaling
+•	Minimum cluster size: 3
+•	Maximum cluster size: 10
+•	Maximum core nodes in the cluster: 8
+•	Maximum On-Demand instances in the cluster: 8
+•	Provisioning configuration instance: 2
+•	Automatically terminate cluster after: 2 days
+•	It will automatically create a bucket and store logs
+•	Create EC2 Key Pair and service role with the previously create VPC and its default security group. The service role is an IAM role that Amazon EMR assumes to provision resources and perform service-level actions with other AWS services 
+•	Create EC2 instance profile for Amazon EMR. The instance profile assigns a role to every EC2 instance in a cluster. The instance profile must specify a role that can access the resources for your steps and bootstrap actions. Let Amazon EMR create a new instance profile so that you can specify a custom set of resources for it to access in Amazon S3: All S3 buckets in this account with read and write access
+
 
