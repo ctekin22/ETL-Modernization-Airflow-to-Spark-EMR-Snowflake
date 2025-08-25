@@ -1,1 +1,13 @@
+CLOUD-NATIVE PYTHON-BASED ETL PIPELINE on AWS with AIRFLOW ORCHESTRATION and SNOWFLAKE 
+
+In this project, the goal is to build an end-to-end data pipeline that extracts real estate data from the Redfin data source and processes it entirely on the AWS cloud. The pipeline begins by provisioning an EC2 instance using an Ubuntu AMI, where Apache Airflow is installed to orchestrate and automate the workflow. The raw data is first extracted from Redfin and stored in an Amazon S3 bucket. Using Python, the data is then cleaned and transformed before being saved to a separate S3 bucket. Once the transformed data lands in S3, it automatically triggers Snowpipe, a feature in Snowflake that loads the data into a Snowflake table in near real-time. Finally, Power BI is connected to the Snowflake database for data visualization.
+
+1.	Extract real estate data from Redfin's public datasets.
+2.	Load the raw data into an Amazon S3 bucket.
+3.	Transform the data using Python and Pandas.
+4.	Store the cleaned data back in S3 in Parquet format.
+5.	Trigger Snowflake Snowpipe automatically once the transformed data lands in S3.
+6.	Load the data into a Snowflake table.
+7.	Visualize it in Power BI connected to Snowflake
+
 
