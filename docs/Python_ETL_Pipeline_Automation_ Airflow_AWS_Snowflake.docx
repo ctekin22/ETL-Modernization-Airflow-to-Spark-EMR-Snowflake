@@ -28,3 +28,13 @@ We'll specify the DAG's configuration, including:
 
 1.2.	 Extract Redfin Data Task- extract_redfin_data
 We define a PythonOperator task called extract_redfin_data task, which downloads city-level Redfin housing data and saves it to the EC2 instance with a timestamp-based filename.
+
+1.3.	 Transform the Data Task- transform_redfin_data
+Once the raw data is extracted, we define a second PythonOperator transform_redfin_data task that reads the CSV, performs transformations using Pandas, and saves the cleaned data back into S3 in Parquet format.
+Initial Data Exploration, Cleanup:
+•	Count total rows to understand dataset size (approx. 60 million rows).
+•	Detect and count null values in each column using PySpark functions.
+•	Drop rows with any null values (dropna()), resulting in a cleaner dataset
+•	Extract year and month from the period_end date column as new separate columns.
+•	Drop the original period_end and last_updated columns to reduce redundancy.
+•	Map numeric month values (1-12) to their corresponding month names (January, February, etc.) for better interpretability.
