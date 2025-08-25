@@ -21,3 +21,10 @@ https://redfin-public-data.s3.us-west-2.amazonaws.com/redfin_market_tracker/city
 
 Refer to scripts/dags/redfin_analytics.ipynb for implementation 
 
+We'll specify the DAG's configuration, including:
+•	Start date: datetime(2025, 10, 2)
+•	Email on failure/retry: Set to False for now, but can be configured to send notifications
+•	Schedule interval: Since Redfin updates its data monthly (typically during the third full week), we recommend scheduling the DAG to run weekly or monthly depending on use-case.
+
+1.2.	 Extract Redfin Data Task- extract_redfin_data
+We define a PythonOperator task called extract_redfin_data task, which downloads city-level Redfin housing data and saves it to the EC2 instance with a timestamp-based filename.
