@@ -47,3 +47,19 @@ The raw CSV file was saved locally in EC2 during the extraction step. We want to
 •	Use overwrite mode to ensure that the output replaces any existing data.
 •	Confirm via the AWS S3 Console that the Parquet file was successfully written.
 
+2.	Load Transformed Redfin Data into Snowflake via Snowpipe (with Airflow Orchestration)
+Goal is to automate the process of loading transformed CSV data from your S3 bucket into Snowflake every time Airflow drops a new file into S3, Snowflake ingests it without manual intervention.
+
+Component	Role
+S3	Stores your cleaned/transformed CSV files (Airflow uploads them here)
+Snowflake	Data warehouse where you’ll query, analyze, and visualize data
+Snowpipe	A Snowflake service that automatically detects and ingests new files from S3 into a target table
+Airflow (on EC2)	Still orchestrating the ETL process — uploads transformed data to S3
+
+•	Creating Snowflake resources: database, schema, and table
+•	Configuring Snowpipe to auto-load data from S3
+•	Connecting S3 event notifications to trigger Snowpipe
+•	Testing the pipeline end-to-end
+•	Visualizing Snowflake data with BI tools
+
+
