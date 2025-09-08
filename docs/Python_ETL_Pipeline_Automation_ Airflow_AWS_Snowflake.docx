@@ -38,3 +38,12 @@ Initial Data Exploration, Cleanup:
 •	Extract year and month from the period_end date column as new separate columns.
 •	Drop the original period_end and last_updated columns to reduce redundancy.
 •	Map numeric month values (1-12) to their corresponding month names (January, February, etc.) for better interpretability.
+
+
+1.4.	 Load Raw Extracted Data to S3 using BashOperator Task - load_to_s3
+The raw CSV file was saved locally in EC2 during the extraction step. We want to preserve the original dataset in an S3 bucket. This way, you have: Transformed data in one S3 bucket for analytics. Raw data in another for traceability or reprocessing.
+
+•	Save the cleaned and transformed DataFrame as a Parquet file to a dedicated AWS S3 bucket.
+•	Use overwrite mode to ensure that the output replaces any existing data.
+•	Confirm via the AWS S3 Console that the Parquet file was successfully written.
+
