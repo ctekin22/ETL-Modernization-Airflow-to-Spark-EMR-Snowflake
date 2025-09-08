@@ -97,3 +97,11 @@ Snowpipe works with Amazon SQS, which listens for S3 events. Snowflake generates
 •	Extract the NOTIFICATION_CHANNEL value (an SQS ARN)
 •	You'll use this when setting up the event in the S3 bucket
 
+2.3.	  Set Up S3 Event Notifications to Trigger Snowpipe
+You need to tell S3 to notify Snowflake (via SQS) whenever a new object is added to the bucket or folder where transformed data land.
+•	Go to your S3 bucket’s Properties > Event Notification
+•	Create a new event:
+o	Name: e.g., snowpipe_trigger_redfin
+o	Event Type: All object create events (PUT, POST, etc.)
+o	Destination: SQS (paste the SQS ARN from DESCRIBE PIPE)
+•	Snowpipe will then auto-ingest the file without delay.
