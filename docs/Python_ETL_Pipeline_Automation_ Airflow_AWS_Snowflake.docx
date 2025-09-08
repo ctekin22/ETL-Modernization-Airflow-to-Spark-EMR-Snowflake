@@ -62,4 +62,11 @@ Airflow (on EC2)	Still orchestrating the ETL process — uploads transformed dat
 •	Testing the pipeline end-to-end
 •	Visualizing Snowflake data with BI tools
 
+2.1.	 Create Database, Schema, and Table in Snowflake
+Snowflake needs to know where to put the data (database + schema + table). You can’t load CSVs without predefining the structure. Snowflake needs to understand the structure and rules of your files (CSV, JSON, etc.) to correctly parse and ingest them.
+
+Snowflake needs compute power to execute queries. This is done using virtual warehouses.
+•	Create your table matching the transformed CSV structure
+
+Refer to scripts/snowflake/redfin_snowflake.sql for implementation
 
