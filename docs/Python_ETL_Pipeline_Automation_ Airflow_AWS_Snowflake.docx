@@ -70,3 +70,30 @@ Snowflake needs compute power to execute queries. This is done using virtual war
 
 Refer to scripts/snowflake/redfin_snowflake.sql for implementation
 
+2.2.	 Create and Configure Snowpipe to Auto-Load from S3
+Snowpipe is a service that: Watches a specified S3 location. When a new file appears, it automatically runs a COPY INTO command to insert the data into a table. Without Snowpipe, you'd need to manually run SQL to load data every time Airflow uploads a file. With Snowpipe, this becomes real-time and event-driven.
+
+•	Create STAGE in Snowflake pointing to S3 bucket. A stage is a reference to an external data location. In this case, you want Snowflake to know:
+o	Where to look (your S3 bucket)
+o	How to authenticate (AWS keys or IAM role)
+o	How the data is structured (via file format object)
+o	Use/Create an IAM role in AWS that:
+	Allows Snowflake to assume the role
+	Grants read access to the specific S3 path (s3://redfin-transformed-data-bucket-airflow/)
+•	Create PIPE (Snowpipe) to ingest data. Just like with file formats and stages, you keep Snowpipe definitions in their own schema. This separation is essential in larger pipelines with dozens of pipes. Manually running COPY INTO every time a file lands in S3 is error-prone and slow. Snowpipe automates this. When a new file is detected in the stage:
+•	It reads the file
+•	Uses the file format definition
+•	Runs the COPY INTO command behind the scenes
+•	Inserts rows into your target table within seconds or minutes
+•	Snowpipe runs in micro-batches, not streaming
+•	It's event-driven if you connect S3 notifications (see next step)
+•	Can be triggered by manual call, S3 event notification, or REST API
+•	You configure Snowpipe with:
+•	The target table 
+•	The source stage 
+•	The file format 
+Snowpipe works with Amazon SQS, which listens for S3 events. Snowflake generates an SQS-compatible ARN when the pipe is created.
+•	Run DESCRIBE PIPE your_pipe_name
+•	Extract the NOTIFICATION_CHANNEL value (an SQS ARN)
+•	You'll use this when setting up the event in the S3 bucket
+
