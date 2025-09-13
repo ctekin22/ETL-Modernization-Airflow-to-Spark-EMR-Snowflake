@@ -123,3 +123,19 @@ PART 3: Same Pipeline with PySpark on Amazon EMR: tomate EMR Jobs with Airflow
 •	scripts – PySpark or shell scripts for EMR
 •	emr-logs – store EMR logs
 
+Start of the Pipeline
+The workflow initiates with an EmptyOperator called start_pipeline. This does not perform any operations but serves as a logical beginning to visually represent the entry point in the Airflow UI. Such empty operators enhance DAG readability and structure, especially in complex workflows.
+
+3.3.	 Creating an EMR Cluster
+The next operation involves provisioning an EMR cluster using the EmrCreateJobFlowOperator. This operator launches a new cluster according to the configuration specified in job_flow_overrides. The next operation involves provisioning an EMR cluster using the EmrCreateJobFlowOperator. This operator launches a new cluster using the configurations defined in job_flow_overrides. These configurations include the following:
+•	Cluster Name: redfin_emr_cluster
+•	Release Label: emr-6.13.0
+•	Applications Installed: Apache Spark and JupyterEnterpriseGateway
+•	Logging: Enabled via LogUri pointing to an S3 bucket (s3://redfin-data-emr/emr-logs/)
+•	Visibility: Set to False, so it's not visible to all AWS users by default
+•	Cluster Composition: 1 master node and 2 core nodes, all of type m5.xlarge, running as on-demand instances
+•	Network Settings: Deployed in subnet subnet-087d3438cd6469ba0 and uses the key pair airflow-key for SSH access
+•	Lifecycle: KeepJobFlowAliveWhenNoSteps set to True allows us to add steps dynamically before auto-termination
+•	IAM Roles: Uses standard roles EMR_EC2_DefaultRole for EC2 and EMR_DefaultRole for the cluster
+
+
