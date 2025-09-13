@@ -181,3 +181,15 @@ The pipeline then uses an EmrStepSensor to monitor whether the data extraction j
 3.7.	 Adding Transformation Step
 Upon successful extraction, a transformation step is submitted to the cluster using another EmrAddStepsOperator. This Spark job invokes a PySpark script (transform_redfin_data.py) using spark-submit and command-runner.jar. The script reads raw data from the raw zone S3 path, performs cleaning (e.g., handling nulls, selecting specific columns), and writes the processed data to a separate S3 path, the transformed zone, in Parquet format.
 This script reads raw data from the raw zone S3 path, performs cleaning (e.g., handling nulls, selecting specific columns), and writes the processed data to a separate S3 path, transformed_data in Parquet format. This shift from CSV to Parquet ensures optimized storage and performance for downstream data consumption.
+Monitoring Transformation Completion
+As with extraction, the transformation step’s progress is tracked by another EmrStepSensor. It listens for the COMPLETED status for the transformation task. As the Spark job runs, the sensor reports the intermediate states like PENDING and RUNNING, until it changes to COMPLETED, ensuring accurate progress tracking.
+
+3.9.	  Terminating the EMR Cluster
+With all processing done, the cluster is programmatically terminated using EmrTerminateJobFlowOperator. This step is crucial to control AWS costs by stopping resource consumption. The operator uses the original job_flow_id to identify which cluster instance to shut down.
+
+3.10.	Confirming Termination
+A second EmrJobFlowSensor is used to validate that the EMR cluster has been successfully terminated. It polls the cluster status at regular intervals until it confirms a TERMINATED state, ensuring the workflow does not exit prematurely.
+
+3.11.	End of the Pipeline
+The DAG concludes with a DummyOperator named end_pipeline. This provides a clear visual marker indicating successful completion of the pipeline. In large or branched DAGs, such markers are essential for easy navigation and logical grouping.
+
