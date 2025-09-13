@@ -113,3 +113,13 @@ As soon as upload completes:
 •	Snowpipe is notified and runs
 •	COPY INTO is executed automatically
 •	Data appears in Snowflake table
+
+PART 3: Same Pipeline with PySpark on Amazon EMR: tomate EMR Jobs with Airflow
+
+3.	Provisioning EMR and Redfin Extraction
+3.1. Create an S3 bucket (e.g., redfin-emr) and folders:
+•	raw_data_ – raw Redfin data
+•	transformed_data – transformed output
+•	scripts – PySpark or shell scripts for EMR
+•	emr-logs – store EMR logs
+
