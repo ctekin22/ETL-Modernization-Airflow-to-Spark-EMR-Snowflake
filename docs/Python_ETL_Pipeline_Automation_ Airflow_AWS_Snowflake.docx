@@ -105,3 +105,11 @@ o	Name: e.g., snowpipe_trigger_redfin
 o	Event Type: All object create events (PUT, POST, etc.)
 o	Destination: SQS (paste the SQS ARN from DESCRIBE PIPE)
 •	Snowpipe will then auto-ingest the file without delay.
+
+2.4.	 Trigger Airflow DAG to Simulate Full Pipeline
+As soon as upload completes:
+•	S3 triggers the event
+•	Event hits the SQS queue
+•	Snowpipe is notified and runs
+•	COPY INTO is executed automatically
+•	Data appears in Snowflake table
