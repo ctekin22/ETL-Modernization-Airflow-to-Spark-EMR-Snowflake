@@ -174,3 +174,10 @@ wget -O - https://redfin-public-data.s3.us-west-2.amazonaws.com/redfin_market_tr
 •	SPARK_STEPS_EXTRACTION tells EMR what to do (run a shell script): It is a list of dictionaries that describe one or more EMR steps in a format compatible with AWS EMR. In our case, it includes a single step called "Extract Redfin data".
 •	EmrAddStepsOperator sends that job to the active EMR cluster
 The job_flow_id is dynamically retrieved using Airflow’s XCom system, pulling from the cluster creation task’s return_value. This allows the operator to submit the Spark step to the correct EMR cluster instance. The SPARK_STEPS_EXTRACTION itself is a list of step configurations where the action is defined as CANCEL_AND_WAIT on failure, providing a safe stop in the event of step failure. Notably, AWS connection settings like aws_conn_id are not required if Airflow is already configured with IAM roles or environment-based credentials.
+
+Monitoring Extraction Completion 
+The pipeline then uses an EmrStepSensor to monitor whether the data extraction job has completed. It fetches the specific step ID from XCom and continues to check until the Spark job reports the status COMPLETED. This continuous monitoring ensures the DAG does not proceed until extraction is verified to be successful. 
+
+3.7.	 Adding Transformation Step
+Upon successful extraction, a transformation step is submitted to the cluster using another EmrAddStepsOperator. This Spark job invokes a PySpark script (transform_redfin_data.py) using spark-submit and command-runner.jar. The script reads raw data from the raw zone S3 path, performs cleaning (e.g., handling nulls, selecting specific columns), and writes the processed data to a separate S3 path, the transformed zone, in Parquet format.
+This script reads raw data from the raw zone S3 path, performs cleaning (e.g., handling nulls, selecting specific columns), and writes the processed data to a separate S3 path, transformed_data in Parquet format. This shift from CSV to Parquet ensures optimized storage and performance for downstream data consumption.
