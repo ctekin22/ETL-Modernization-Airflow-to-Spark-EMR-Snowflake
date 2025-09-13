@@ -193,3 +193,8 @@ A second EmrJobFlowSensor is used to validate that the EMR cluster has been succ
 3.11.	End of the Pipeline
 The DAG concludes with a DummyOperator named end_pipeline. This provides a clear visual marker indicating successful completion of the pipeline. In large or branched DAGs, such markers are essential for easy navigation and logical grouping.
 
+3.12.	Validation and Triggering Snowflake Pipeline
+After the transformation step is complete, the processed Parquet files are verified to be written to the transformed S3 path. This event sets the stage for Snowpipe in Snowflake to be triggered. Snowpipe, which listens to S3 bucket events, initiates a COPY INTO operation to load Parquet data into a Snowflake table. 
+Refer to step 2.3 and 2.4 above
+Notification_channel to create S3 event to trigger snowpipe: 
+arn:aws:sqs:us-east-1:657399552674:sf-snowpipe-AIDAZSEARDKRJ4ZAIWHYT-ygkQfa1-z0UlbOmI6Dh-TQ
