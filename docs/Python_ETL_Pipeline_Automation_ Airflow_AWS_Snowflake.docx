@@ -145,3 +145,32 @@ Upon execution, this operator returns a unique job_flow_id, which will be used t
 Once the EMR cluster is requested, its readiness is confirmed using the EmrJobFlowSensor. This sensor checks whether the EMR cluster has reached the WAITING state, meaning it's provisioned and idle, ready to execute Spark jobs. The sensor accesses the job_flow_id (key: return value, value:CLUSTER ID (same as AWS EMR)) from the output of the cluster creation task through Airflow's XCom mechanism, which supports cross-task data sharing. The cluster status is polled every 5 seconds (via poke_interval) until it is marked as ready. This prevents the pipeline from proceeding prematurely and ensures that resources are fully provisioned before Spark job submission begins.
 Again, there is no need to set aws_conn_id.
 
+Adding Extraction Step
+After confirming that the EMR cluster is in a ready state, the DAG proceeds to submit a Spark job using the EmrAddStepsOperator. This operator is responsible for pushing executable steps (or jobs) to the EMR cluster. But to define what the cluster actually does, we use a Python object called SPARK_STEPS_EXTRACTION.
+
+
+•	After ensuring the cluster is in a ready state, the DAG submits a Spark job using the EmrAddStepsOperator. 
+•	This job adds an EMR step defined in the SPARK_STEPS_EXTRACTION object. The step leverages a built-in EMR script runner JAR located at:
+s3://<region>.elasticmapreduce/libs/script-runner/script-runner.jar
+•	This ingest.sh script is responsible for downloading real estate data from Redfin using wget, unzipping the file, and storing it in the raw data zone of your S3 bucket.
+
+wget -O - https://redfin-public-data.s3.us-west-2.amazonaws.com/redfin_market_tracker/city_market_tracker.tsv000.gz | aws s3 cp - s3://redfin-data-emr/raw-data/city_market_tracker.tsv000.gz
+
+•	SPARK_STEPS_EXTRACTION tells EMR what to do (run a shell script): It is a list of dictionaries that describe one or more EMR steps in a format compatible with AWS EMR. In our case, it includes a single step called "Extract Redfin data".
+•	EmrAddStepsOperator sends that job to the active EMR cluster
+The job_flow_id is dynamically retrieved using Airflow’s XCom system, pulling from the cluster creation task’s return_value. This allows the operator to submit the Spark step to the correct EMR cluster instance. The SPARK_STEPS_EXTRACTION itself is a list of step configurations where the action is defined as CANCEL_AND_WAIT on failure, providing a safe stop in the event of step failure. Notably, AWS connection settings like aws_conn_id are not required if Airflow is already configured with IAM roles or environment-based credentials.
+
+Adding Extraction Step
+After confirming that the EMR cluster is in a ready state, the DAG proceeds to submit a Spark job using the EmrAddStepsOperator. This operator is responsible for pushing executable steps (or jobs) to the EMR cluster. But to define what the cluster actually does, we use a Python object called SPARK_STEPS_EXTRACTION.
+
+
+•	After ensuring the cluster is in a ready state, the DAG submits a Spark job using the EmrAddStepsOperator. 
+•	This job adds an EMR step defined in the SPARK_STEPS_EXTRACTION object. The step leverages a built-in EMR script runner JAR located at:
+s3://<region>.elasticmapreduce/libs/script-runner/script-runner.jar
+•	This ingest.sh script is responsible for downloading real estate data from Redfin using wget, unzipping the file, and storing it in the raw data zone of your S3 bucket.
+
+wget -O - https://redfin-public-data.s3.us-west-2.amazonaws.com/redfin_market_tracker/city_market_tracker.tsv000.gz | aws s3 cp - s3://redfin-data-emr/raw-data/city_market_tracker.tsv000.gz
+
+•	SPARK_STEPS_EXTRACTION tells EMR what to do (run a shell script): It is a list of dictionaries that describe one or more EMR steps in a format compatible with AWS EMR. In our case, it includes a single step called "Extract Redfin data".
+•	EmrAddStepsOperator sends that job to the active EMR cluster
+The job_flow_id is dynamically retrieved using Airflow’s XCom system, pulling from the cluster creation task’s return_value. This allows the operator to submit the Spark step to the correct EMR cluster instance. The SPARK_STEPS_EXTRACTION itself is a list of step configurations where the action is defined as CANCEL_AND_WAIT on failure, providing a safe stop in the event of step failure. Notably, AWS connection settings like aws_conn_id are not required if Airflow is already configured with IAM roles or environment-based credentials.
