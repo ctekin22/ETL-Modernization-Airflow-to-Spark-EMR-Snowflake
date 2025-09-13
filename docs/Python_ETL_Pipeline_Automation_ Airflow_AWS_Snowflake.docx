@@ -138,4 +138,10 @@ The next operation involves provisioning an EMR cluster using the EmrCreateJobFl
 •	Lifecycle: KeepJobFlowAliveWhenNoSteps set to True allows us to add steps dynamically before auto-termination
 •	IAM Roles: Uses standard roles EMR_EC2_DefaultRole for EC2 and EMR_DefaultRole for the cluster
 
+This operation requires the apache-airflow-providers-amazon package. Without it, Airflow cannot recognize the EMR-related operators like EmrCreateJobFlowOperator, EmrAddStepsOperator, and EmrTerminateJobFlowOperator. This package provides official AWS integrations for Airflow, allowing orchestration of EMR, S3, Lambda, Redshift, and other AWS services. If this provider is not installed, a ModuleNotFoundError will be raised.
+No need to specify aws_conn_id in the operator: AWS credentials are configured using IAM roles. This makes the DAG cleaner and avoids hardcoding credentials.
+Upon execution, this operator returns a unique job_flow_id, which will be used to track and control the cluster through the rest of the DAG.
+3.4.	 Checking Cluster Readiness
+Once the EMR cluster is requested, its readiness is confirmed using the EmrJobFlowSensor. This sensor checks whether the EMR cluster has reached the WAITING state, meaning it's provisioned and idle, ready to execute Spark jobs. The sensor accesses the job_flow_id (key: return value, value:CLUSTER ID (same as AWS EMR)) from the output of the cluster creation task through Airflow's XCom mechanism, which supports cross-task data sharing. The cluster status is polled every 5 seconds (via poke_interval) until it is marked as ready. This prevents the pipeline from proceeding prematurely and ensures that resources are fully provisioned before Spark job submission begins.
+Again, there is no need to set aws_conn_id.
 
